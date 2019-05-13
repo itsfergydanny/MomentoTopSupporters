@@ -1,0 +1,10 @@
+name: MomentoTopSupporters
+version: ${project.version}
+main: com.dnyferguson.momentotopsupporters.MomentoTopSupporters
+authors: [fergydanny]
+description: Automatically reward the top supporters
+commands:
+  addvote:
+    description: Add a vote to a player's topvoter count.
+  topvoter:
+    description: Main topvoter command.

@@ -1,0 +1,10 @@
+# MySQL credentials
+mysql:
+  ip: '127.0.0.1'
+  port: '3306'
+  username: 'root'
+  password: 'password'
+  database: 'Topvoter'
+
+# Set current momento money per vote
+mm-per-vote: 0.05
