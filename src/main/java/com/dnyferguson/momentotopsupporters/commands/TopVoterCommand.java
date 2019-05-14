@@ -2,6 +2,7 @@ package com.dnyferguson.momentotopsupporters.commands;
 
 import com.dnyferguson.momentotopsupporters.MomentoTopSupporters;
 import com.dnyferguson.momentotopsupporters.utils.Chat;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -91,13 +92,20 @@ public class TopVoterCommand implements CommandExecutor {
                     pst = con.prepareStatement("SELECT * FROM `TopVoterRecent` ORDER BY `Votes` DESC, `Creation` ASC LIMIT 10");
                     ResultSet rs = pst.executeQuery();
 
+                    int position = 0;
                     while (rs.next()) {
+                        position++;
                         String username = rs.getString("PLAYERNAME");
                         String uuid = rs.getString("UUID");
                         int votes = rs.getInt("Votes");
                         long creation  = rs.getLong("Creation");
                         pst = con.prepareStatement("INSERT INTO `TopVoterOld` (`UUID`, `PLAYERNAME`, `Votes`, `Creation`) VALUES ('" + uuid + "', '" + username + "', '" + votes + "', '" + creation + "')");
                         pst.execute();
+                        if (position == 1) {
+                            addBalance(sender, uuid, 50.0);
+                        } else {
+                            addBalance(sender, uuid, 25.0);
+                        }
                     }
 
                     // Truncate new table
@@ -108,6 +116,15 @@ public class TopVoterCommand implements CommandExecutor {
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
+            }
+        });
+    }
+
+    private void addBalance(CommandSender sender, String target, double amount) {
+        plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
+            @Override
+            public void run() {
+                Bukkit.dispatchCommand(sender, "ad addbalance " + target + " " + amount);
             }
         });
     }
