@@ -44,6 +44,10 @@ public class MySQL {
             // Create streaks table
             pst = con.prepareStatement("CREATE TABLE IF NOT EXISTS `" + database + "`.`TopVoterStreak` ( `uuid` VARCHAR(36) NOT NULL , `ign` VARCHAR(16) NOT NULL , `streak` INT NOT NULL , `time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , PRIMARY KEY (`uuid`)) ENGINE = InnoDB;");
             pst.execute();
+
+            // Create daily limit table
+            pst = con.prepareStatement("CREATE TABLE IF NOT EXISTS `" + database + "`.`TopVoterDailyLimit` ( `ip` VARCHAR(100) NOT NULL , `count` INT NOT NULL , UNIQUE (`ip`)) ENGINE = InnoDB;");
+            pst.execute();
         } catch (SQLException e) {
             e.printStackTrace();
         }

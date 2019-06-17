@@ -59,6 +59,12 @@ public class TopVoterCommand implements CommandExecutor {
                     reset(sender);
                 }
                 break;
+            case "resetlimit":
+                // Reset top 10
+                if (sender.hasPermission("topsupporters.resetlimit")) {
+                    resetLimit(sender);
+                }
+                break;
             case "last":
                 showLastMonthsTopTen(sender);
                 break;
@@ -77,6 +83,23 @@ public class TopVoterCommand implements CommandExecutor {
                 break;
         }
         return true;
+    }
+
+    private void resetLimit(CommandSender sender) {
+        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable() {
+            @Override
+            public void run() {
+                try (Connection con = plugin.getSql().getDatasource().getConnection()) {
+                    // Truncate old table
+                    PreparedStatement pst = con.prepareStatement("TRUNCATE TopVoterDailyLimit");
+                    pst.execute();
+
+                    sender.sendMessage(Chat.format("&aSuccessfully reset daily voting limits."));
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     private void reset(CommandSender sender) {
