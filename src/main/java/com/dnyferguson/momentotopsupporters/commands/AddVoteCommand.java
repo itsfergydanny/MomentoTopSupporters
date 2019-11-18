@@ -125,43 +125,43 @@ public class AddVoteCommand implements CommandExecutor {
         double multiplier = 1.0;
 
         if (streak >= 50) {
-            multiplier = 1.25;
+            multiplier = 1.1;
         }
 
         if (streak >= 100) {
-            multiplier = 1.5;
+            multiplier = 1.2;
         }
 
         if (streak >= 150) {
-            multiplier = 1.75;
+            multiplier = 1.3;
         }
 
         if (streak >= 200) {
-            multiplier = 2.0;
+            multiplier = 1.4;
         }
 
         if (streak >= 250) {
-            multiplier = 2.25;
+            multiplier = 1.5;
         }
 
         if (streak >= 300) {
-            multiplier = 2.5;
+            multiplier = 1.6;
         }
 
         if (streak >= 350) {
-            multiplier = 2.75;
+            multiplier = 1.7;
         }
 
         if (streak >= 400) {
-            multiplier = 3.0;
+            multiplier = 1.8;
         }
 
         if (streak >= 450) {
-            multiplier = 3.25;
+            multiplier = 1.9;
         }
 
         if (streak >= 500) {
-            multiplier = 3.5;
+            multiplier = 2;
         }
 
         return baseBalancePerVote * multiplier;

@@ -155,7 +155,7 @@ public class TopVoterCommand implements CommandExecutor {
     private void showInfo(CommandSender sender) {
         String message = ("&bTop voters: \n&eThe top 10 voters every month earn themselves a special prize. The prizes are displayed on the right of &7/topvoter top &eand are handed out" +
                 " in the form of our virtual currency that you can use to get store giftcards (momento money) at the start of every month.\n ") +
-                "\n &bStreaks: \n&eEvery 50 consecutive votes (up to 500) your streak multiplier will increase by 0.25 (25%). The amount of momento money you receive on every vote " +
+                "\n &bStreaks: \n&eEvery 50 consecutive votes (up to 500) your streak multiplier will increase by 0.1 (10%). The amount of momento money you receive on every vote " +
                 "will be multiplied by your streak multiplier. \n \n&cPlease note that if you have not voted in the last 48 hours, your streak will go back to 0.\n \n&cPlease also note that in order to keep your topvoter and streak counts going, " +
                 "you need to be on a game server when you vote (any server except hubs).";
         sender.sendMessage(Chat.format(message));
@@ -313,43 +313,43 @@ public class TopVoterCommand implements CommandExecutor {
                         double multiplier = 1.0;
 
                         if (streak >= 50) {
-                            multiplier = 1.25;
+                            multiplier = 1.1;
                         }
 
                         if (streak >= 100) {
-                            multiplier = 1.5;
+                            multiplier = 1.2;
                         }
 
                         if (streak >= 150) {
-                            multiplier = 1.75;
+                            multiplier = 1.3;
                         }
 
                         if (streak >= 200) {
-                            multiplier = 2.0;
+                            multiplier = 1.4;
                         }
 
                         if (streak >= 250) {
-                            multiplier = 2.25;
+                            multiplier = 1.5;
                         }
 
                         if (streak >= 300) {
-                            multiplier = 2.5;
+                            multiplier = 1.6;
                         }
 
                         if (streak >= 350) {
-                            multiplier = 2.75;
+                            multiplier = 1.7;
                         }
 
                         if (streak >= 400) {
-                            multiplier = 3.0;
+                            multiplier = 1.8;
                         }
 
                         if (streak >= 450) {
-                            multiplier = 3.25;
+                            multiplier = 1.9;
                         }
 
                         if (streak >= 500) {
-                            multiplier = 3.5;
+                            multiplier = 2;
                         }
 
                         player.sendMessage(Chat.format("&aYou currently have a streak of &e" + streak + " &avotes.\nYour momento money received from voting will be multiplied by " + multiplier));
