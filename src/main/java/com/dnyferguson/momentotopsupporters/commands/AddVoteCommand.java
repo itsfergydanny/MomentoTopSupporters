@@ -49,26 +49,9 @@ public class AddVoteCommand implements CommandExecutor {
                     String name = player.getName();
                     int voteCount = 1;
 
-                    // handle checking daily limit
-                    String ip = player.getAddress().getAddress().getHostAddress();
-                    PreparedStatement pst = con.prepareStatement("SELECT * FROM `TopVoterDailyLimit` WHERE `ip` = '" + ip + "'");
-                    ResultSet rs = pst.executeQuery();
-                    if (rs.next()) {
-                        int count = rs.getInt("count");
-                        if (count >= 24) {
-                            player.sendMessage(Chat.format("&cYou have reached your daily limit of votes. You are only allowed to vote on 3 accounts per day!"));
-                            return;
-                        }
-                        pst = con.prepareStatement("UPDATE `TopVoterDailyLimit` SET `count`='" + (count + 1) + "' WHERE `ip` = '" + ip + "'");
-                        pst.execute();
-                    } else {
-                        pst = con.prepareStatement("INSERT INTO `TopVoterDailyLimit`(`ip`, `count`) VALUES ('" + ip + "','1')");
-                        pst.execute();
-                    }
-
                     // handle adding vote
-                    pst = con.prepareStatement("SELECT * FROM `TopVoterRecent` WHERE `UUID` = '" + uuid + "'");
-                    rs = pst.executeQuery();
+                    PreparedStatement pst = con.prepareStatement("SELECT * FROM `TopVoterRecent` WHERE `UUID` = '" + uuid + "'");
+                    ResultSet rs = pst.executeQuery();
                     if (rs.next()) {
                         int currentVotes = rs.getInt("Votes");
                         voteCount = currentVotes + 1;
