@@ -154,10 +154,7 @@ public class TopVoterCommand implements CommandExecutor {
 
     private void showInfo(CommandSender sender) {
         String message = ("&bTop voters: \n&eThe top 10 voters every month earn themselves a special prize. The prizes are displayed on the right of &7/topvoter top &eand are handed out" +
-                " in the form of our virtual currency that you can use to get store giftcards (momento money) at the start of every month.\n ") +
-                "\n &bStreaks: \n&eEvery 50 consecutive votes (up to 500) your streak multiplier will increase by 0.1 (10%). The amount of momento money you receive on every vote " +
-                "will be multiplied by your streak multiplier. \n \n&cPlease note that if you have not voted in the last 48 hours, your streak will go back to 0.\n \n&cPlease also note that in order to keep your topvoter and streak counts going, " +
-                "you need to be on a game server when you vote (any server except hubs).";
+                " in the form of our virtual currency that you can use to get store giftcards (momento money) at the start of every month.");
         sender.sendMessage(Chat.format(message));
     }
 
@@ -352,7 +349,7 @@ public class TopVoterCommand implements CommandExecutor {
                             multiplier = 2;
                         }
 
-                        player.sendMessage(Chat.format("&aYou currently have a streak of &e" + streak + " &avotes.\nYour momento money received from voting will be multiplied by " + multiplier));
+                        player.sendMessage(Chat.format("&aYou currently have a streak of &e" + streak + " &avotes."));
                     } else {
                         player.sendMessage(Chat.format("&cYou currently have no streak (no vote in the last 48h)"));
                     }

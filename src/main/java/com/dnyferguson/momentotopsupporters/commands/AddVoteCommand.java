@@ -13,11 +13,9 @@ import java.sql.*;
 public class AddVoteCommand implements CommandExecutor {
 
     private MomentoTopSupporters plugin;
-    private double baseBalancePerVote;
 
     public AddVoteCommand(MomentoTopSupporters plugin) {
         this.plugin = plugin;
-        this.baseBalancePerVote = plugin.getConfig().getDouble("mm-per-vote");
     }
 
     @Override
@@ -90,16 +88,13 @@ public class AddVoteCommand implements CommandExecutor {
                         if (time.getTime() > com.dnyferguson.momentotopsupporters.utils.Time.getBackwards("2d").getTime()) {
                             pst = con.prepareStatement("UPDATE `TopVoterStreak` SET `ign`='" + name + "',`streak`='" + (streak + 1) + "',`time`=CURRENT_TIMESTAMP WHERE `uuid` = '" + uuid + "'");
                             pst.execute();
-                            giveBalance(sender, name, streak);
                         } else {
                             pst = con.prepareStatement("UPDATE `TopVoterStreak` SET `ign`='" + name + "',`streak`='1',`time`=CURRENT_TIMESTAMP WHERE `uuid` = '" + uuid + "'");
                             pst.execute();
-                            giveBalance(sender, name, 1);
                         }
                     } else {
                         pst = con.prepareStatement("INSERT INTO `TopVoterStreak` (`uuid`, `ign`, `streak`, `time`) VALUES ('" + uuid + "', '" + name + "', '1', CURRENT_TIMESTAMP)");
                         pst.execute();
-                        giveBalance(sender, name, 1);
                     }
 
 
@@ -110,60 +105,5 @@ public class AddVoteCommand implements CommandExecutor {
                 }
             }
         });
-    }
-
-    private void giveBalance(CommandSender sender, String target, int streak) {
-        plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
-            @Override
-            public void run() {
-                Bukkit.dispatchCommand(sender, "ad addbalance " + target + " " + calculateReward(streak));
-            }
-        });
-    }
-
-    private double calculateReward(int streak) {
-        double multiplier = 1.0;
-
-        if (streak >= 50) {
-            multiplier = 1.1;
-        }
-
-        if (streak >= 100) {
-            multiplier = 1.2;
-        }
-
-        if (streak >= 150) {
-            multiplier = 1.3;
-        }
-
-        if (streak >= 200) {
-            multiplier = 1.4;
-        }
-
-        if (streak >= 250) {
-            multiplier = 1.5;
-        }
-
-        if (streak >= 300) {
-            multiplier = 1.6;
-        }
-
-        if (streak >= 350) {
-            multiplier = 1.7;
-        }
-
-        if (streak >= 400) {
-            multiplier = 1.8;
-        }
-
-        if (streak >= 450) {
-            multiplier = 1.9;
-        }
-
-        if (streak >= 500) {
-            multiplier = 2;
-        }
-
-        return baseBalancePerVote * multiplier;
     }
 }

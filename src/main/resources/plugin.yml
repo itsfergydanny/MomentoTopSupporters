@@ -1,5 +1,5 @@
 name: MomentoTopSupporters
-version: ${project.version}
+version: 1.1
 main: com.dnyferguson.momentotopsupporters.MomentoTopSupporters
 authors: [fergydanny]
 description: Automatically reward the top supporters

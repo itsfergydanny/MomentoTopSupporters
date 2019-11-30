@@ -5,6 +5,3 @@ mysql:
   username: 'root'
   password: 'password'
   database: 'Topvoter'
-
-# Set current momento money per vote
-mm-per-vote: 0.05
