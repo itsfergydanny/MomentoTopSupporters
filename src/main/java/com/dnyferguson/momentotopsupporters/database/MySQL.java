@@ -7,12 +7,13 @@ import org.bukkit.configuration.file.FileConfiguration;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class MySQL {
 
     private MomentoTopSupporters plugin;
-    private HikariDataSource datasource;
+    private HikariDataSource ds;
 
     public MySQL(MomentoTopSupporters plugin) {
         this.plugin = plugin;
@@ -26,34 +27,80 @@ public class MySQL {
         config.addDataSourceProperty("prepStmtCacheSize", "250");
         config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
 
-        this.datasource = new HikariDataSource(config);
+        this.ds = new HikariDataSource(config);
 
         createTables(cfg.getString("mysql.database"));
     }
 
     private void createTables(String database) {
-        try (Connection con = datasource.getConnection()) {
-            // Create topvoter old table
-            PreparedStatement pst = con.prepareStatement("CREATE TABLE IF NOT EXISTS `" + database + "`.`TopVoterRecent`  (UUID VARCHAR(37) PRIMARY KEY,PLAYERNAME TEXT NOT NULL,Votes INT UNSIGNED NOT NULL,Creation BIGINT UNSIGNED NOT NULL);");
-            pst.execute();
-
-            // Create topvoter new table
-            pst = con.prepareStatement("CREATE TABLE IF NOT EXISTS `" + database + "`.`TopVoterOld`  (UUID VARCHAR(37) PRIMARY KEY,PLAYERNAME TEXT NOT NULL,Votes INT UNSIGNED NOT NULL,Creation BIGINT UNSIGNED NOT NULL);");
-            pst.execute();
-
-            // Create streaks table
-            pst = con.prepareStatement("CREATE TABLE IF NOT EXISTS `" + database + "`.`TopVoterStreak` ( `uuid` VARCHAR(36) NOT NULL , `ign` VARCHAR(16) NOT NULL , `streak` INT NOT NULL , `time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , PRIMARY KEY (`uuid`)) ENGINE = InnoDB;");
-            pst.execute();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        executeStatementAsync("CREATE TABLE IF NOT EXISTS `" + database + "`.`TopVoterRecent`  (UUID VARCHAR(37) PRIMARY KEY,PLAYERNAME TEXT NOT NULL,Votes INT UNSIGNED NOT NULL,Creation BIGINT UNSIGNED NOT NULL);");
+        executeStatementAsync("CREATE TABLE IF NOT EXISTS `" + database + "`.`TopVoterOld`  (UUID VARCHAR(37) PRIMARY KEY,PLAYERNAME TEXT NOT NULL,Votes INT UNSIGNED NOT NULL,Creation BIGINT UNSIGNED NOT NULL);");
+        executeStatementAsync("CREATE TABLE IF NOT EXISTS `" + database + "`.`TopVoterStreak` ( `uuid` VARCHAR(36) NOT NULL , `ign` VARCHAR(16) NOT NULL , `streak` INT NOT NULL , `time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , PRIMARY KEY (`uuid`)) ENGINE = InnoDB;");
     }
 
-    public void closeConnections() {
-        this.datasource.close();
+    public void getResultAsync(String stmt, FindResultCallback callback) {
+        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable() {
+            @Override
+            public void run() {
+                try (Connection con = ds.getConnection()) {
+                    PreparedStatement pst = con.prepareStatement(stmt);
+                    ResultSet rs = pst.executeQuery();
+                    callback.onQueryDone(rs);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
-    public HikariDataSource getDatasource() {
-        return datasource;
+    public void getResultSync(String stmt, FindResultCallback callback) {
+        plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
+            @Override
+            public void run() {
+                try (Connection con = ds.getConnection()) {
+                    PreparedStatement pst = con.prepareStatement(stmt);
+                    ResultSet rs = pst.executeQuery();
+                    callback.onQueryDone(rs);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    public void executeStatementSync(String stmt) {
+        plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
+            @Override
+            public void run() {
+                try (Connection con = ds.getConnection()) {
+                    PreparedStatement pst = con.prepareStatement(stmt);
+                    pst.execute();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    public void executeStatementAsync(String stmt) {
+        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable() {
+            @Override
+            public void run() {
+                try (Connection con = ds.getConnection()) {
+                    PreparedStatement pst = con.prepareStatement(stmt);
+                    pst.execute();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    public HikariDataSource getDs() {
+        return ds;
+    }
+
+    public void close() {
+        ds.close();
     }
 }
