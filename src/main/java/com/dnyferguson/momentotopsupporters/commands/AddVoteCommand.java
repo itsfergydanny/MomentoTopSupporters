@@ -35,7 +35,7 @@ public class AddVoteCommand implements CommandExecutor {
 
         Player player = Bukkit.getPlayer(args[0]);
         if (player == null) {
-            sender.sendMessage(Chat.format("&cPlayer not found."));
+            addVote(sender, args[0]);
             return true;
         }
 
@@ -84,5 +84,49 @@ public class AddVoteCommand implements CommandExecutor {
             plugin.getReminderTimers().get(player.getUniqueId()).cancel();
             plugin.getReminderTimers().remove(player.getUniqueId());
         }
+    }
+
+    // Handle adding vote by IGN, useful for offline votes
+    private void addVote(CommandSender sender, String ign) {
+        plugin.getSql().getResultAsync("SELECT * FROM `users` WHERE `ign` = '" + ign + "'", new FindResultCallback() {
+            @Override
+            public void onQueryDone(ResultSet result) throws SQLException {
+                if (result.next()) {
+                    String uuid = result.getString("uuid");
+
+                    // Handle adding vote
+                    plugin.getSql().getResultAsync("SELECT * FROM `TopVoterRecent` WHERE `UUID` = '" + uuid + "'", new FindResultCallback() {
+                        @Override
+                        public void onQueryDone(ResultSet result) throws SQLException {
+                            if (result.next()) {
+                                int currentVotes = result.getInt("Votes");
+                                sender.sendMessage(Chat.format("&aYou have successfully added a vote to " + ign + "\'s topvoter count. They now have " + (currentVotes + 1) + " votes."));
+                                plugin.getSql().executeStatementAsync("UPDATE `TopVoterRecent` SET `PLAYERNAME` = '" + ign + "',Votes = '" + (currentVotes + 1) + "',Creation = '" + System.currentTimeMillis() + "' WHERE UUID = '" + uuid + "';");
+                            } else {
+                                plugin.getSql().executeStatementAsync("INSERT INTO `TopVoterRecent` (`UUID`,`PLAYERNAME`, `Votes`,`Creation`) VALUES ('" + uuid + "', '" + ign + "', '1', '" + System.currentTimeMillis() + "');");
+                            }
+                        }
+                    });
+
+                    // Handle adding streak
+                    plugin.getSql().getResultAsync("SELECT * FROM `TopVoterStreak` WHERE `uuid` = '" + uuid + "'", new FindResultCallback() {
+                        @Override
+                        public void onQueryDone(ResultSet result) throws SQLException {
+                            if (result.next()) {
+                                Timestamp time = result.getTimestamp("time");
+                                int streak = result.getInt("streak");
+                                if (time.getTime() > com.dnyferguson.momentotopsupporters.utils.Time.getBackwards("2d").getTime()) {
+                                    plugin.getSql().executeStatementAsync("UPDATE `TopVoterStreak` SET `ign`='" + ign + "',`streak`='" + (streak + 1) + "',`time`=CURRENT_TIMESTAMP WHERE `uuid` = '" + uuid + "'");
+                                } else {
+                                    plugin.getSql().executeStatementAsync("UPDATE `TopVoterStreak` SET `ign`='" + ign + "',`streak`='1',`time`=CURRENT_TIMESTAMP WHERE `uuid` = '" + uuid + "'");
+                                }
+                            } else {
+                                plugin.getSql().executeStatementAsync("INSERT INTO `TopVoterStreak` (`uuid`, `ign`, `streak`, `time`) VALUES ('" + uuid + "', '" + ign + "', '1', CURRENT_TIMESTAMP)");
+                            }
+                        }
+                    });
+                }
+            }
+        });
     }
 }

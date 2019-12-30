@@ -40,6 +40,7 @@ public final class MomentoTopSupporters extends JavaPlugin {
             @Override
             public void run() {
                 for (Player player : Bukkit.getOnlinePlayers()) {
+                    updateUsername(player);
                     checkForReminder(player);
                 }
             }
@@ -60,6 +61,22 @@ public final class MomentoTopSupporters extends JavaPlugin {
 
     public Map<UUID, BukkitTask> getReminderTimers() {
         return reminderTimers;
+    }
+
+    public void updateUsername(Player player) {
+        String ign = player.getName();
+        String uuid = player.getUniqueId().toString();
+
+        getSql().getResultAsync("SELECT * FROM `users` WHERE `uuid` = '" + uuid + "'", new FindResultCallback() {
+            @Override
+            public void onQueryDone(ResultSet result) throws SQLException {
+                if (result.next()) {
+                    getSql().executeStatementAsync("UPDATE `users` SET `ign`='" + ign + "',`updated`=CURRENT_TIMESTAMP WHERE `uuid` = '" + uuid + "'");
+                } else {
+                    getSql().executeStatementAsync("INSERT INTO `users` (`id`, `uuid`, `ign`, `updated`) VALUES (NULL, '" + uuid + "', '" + ign + "', CURRENT_TIMESTAMP)");
+                }
+            }
+        });
     }
 
     public void checkForReminder(Player player) {

@@ -17,6 +17,7 @@ public class LoginListener implements Listener {
     @EventHandler
     public void onEvent(PlayerLoginEvent e) {
         Player player = e.getPlayer();
+        plugin.updateUsername(player);
         plugin.checkForReminder(player);
     }
 }
