@@ -33,7 +33,7 @@ public class AddVoteCommand implements CommandExecutor {
             return true;
         }
 
-        Player player = Bukkit.getPlayer(args[0]);
+        Player player = Bukkit.getPlayerExact(args[0]);
         if (player == null) {
             addVote(sender, args[0]);
             return true;
