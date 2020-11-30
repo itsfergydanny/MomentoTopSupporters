@@ -90,11 +90,11 @@ public class TopVoterCommand implements CommandExecutor {
                     int votes = result.getInt("Votes");
                     long creation  = result.getLong("Creation");
                     plugin.getSql().executeStatementAsync("INSERT INTO `TopVoterOld` (`UUID`, `PLAYERNAME`, `Votes`, `Creation`) VALUES ('" + uuid + "', '" + username + "', '" + votes + "', '" + creation + "')");
-                    if (position == 1) {
-                        addBalance(sender, uuid, 50.0);
-                    } else {
-                        addBalance(sender, uuid, 25.0);
-                    }
+//                    if (position == 1) {
+//                        addBalance(sender, uuid, 50.0);
+//                    } else {
+//                        addBalance(sender, uuid, 25.0);
+//                    }
                 }
 
                 plugin.getSql().executeStatementAsync("TRUNCATE TopVoterRecent");
@@ -103,17 +103,17 @@ public class TopVoterCommand implements CommandExecutor {
         });
     }
 
-    private void addBalance(CommandSender sender, String target, double amount) {
-        plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
-            @Override
-            public void run() {
-                Bukkit.dispatchCommand(sender, "ad addbalance " + target + " " + amount);
-            }
-        });
-    }
+//    private void addBalance(CommandSender sender, String target, double amount) {
+//        plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
+//            @Override
+//            public void run() {
+//                Bukkit.dispatchCommand(sender, "ad addbalance " + target + " " + amount);
+//            }
+//        });
+//    }
 
     private void showInfo(CommandSender sender) {
-        String message = ("&bTop voters: \n&eThe top 10 voters every month earn themselves a special prize. The prizes are displayed on the right of &7/topvoter top &eand are handed out" +
+        String message = ("&bTop voters: \n&eThe top 3 voters every month earn themselves a special prize. The prizes are displayed on the right of &7/topvoter top &eand are handed out" +
                 " in the form of our virtual currency that you can use to get store giftcards (momento money) at the start of every month.");
         sender.sendMessage(Chat.format(message));
     }
@@ -167,10 +167,15 @@ public class TopVoterCommand implements CommandExecutor {
                     message.append(result.getInt("Votes"));
                     message.append(" &7votes.");
                     if (position == 1) {
-                        message.append(" &a(50$ Momento Money)\n");
-                    } else {
-                        message.append(" &a(25$ Momento Money)\n");
+                        message.append(" &a($20 Store Coupon)\n");
                     }
+                    if (position == 2) {
+                        message.append(" &a($10 Store Coupon)\n");
+                    }
+                    if (position == 3) {
+                        message.append(" &a($5 Store Coupon)\n");
+                    }
+                    message.append("\n");
                     position++;
                 }
 
@@ -202,10 +207,15 @@ public class TopVoterCommand implements CommandExecutor {
                     message.append(result.getInt("Votes"));
                     message.append(" &7votes.");
                     if (position == 1) {
-                        message.append(" &a(50$ Momento Money)\n");
-                    } else {
-                        message.append(" &a(25$ Momento Money)\n");
+                        message.append(" &a($20 Store Coupon)\n");
                     }
+                    if (position == 2) {
+                        message.append(" &a($10 Store Coupon)\n");
+                    }
+                    if (position == 3) {
+                        message.append(" &a($5 Store Coupon)\n");
+                    }
+                    message.append("\n");
                     position++;
                 }
 
