@@ -90,11 +90,19 @@ public class TopVoterCommand implements CommandExecutor {
                     int votes = result.getInt("Votes");
                     long creation  = result.getLong("Creation");
                     plugin.getSql().executeStatementAsync("INSERT INTO `TopVoterOld` (`UUID`, `PLAYERNAME`, `Votes`, `Creation`) VALUES ('" + uuid + "', '" + username + "', '" + votes + "', '" + creation + "')");
-//                    if (position == 1) {
-//                        addBalance(sender, uuid, 50.0);
-//                    } else {
-//                        addBalance(sender, uuid, 25.0);
-//                    }
+                    if (position == 1) {
+                        plugin.getServer().getScheduler().runTask(plugin, () -> {
+                            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "createcoupon " + username + " 20");
+                        });
+                    } else if (position == 2) {
+                        plugin.getServer().getScheduler().runTask(plugin, () -> {
+                            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "createcoupon " + username + " 10");
+                        });
+                    } else if (position == 3) {
+                        plugin.getServer().getScheduler().runTask(plugin, () -> {
+                           Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "createcoupon " + username + " 5");
+                        });
+                    }
                 }
 
                 plugin.getSql().executeStatementAsync("TRUNCATE TopVoterRecent");
